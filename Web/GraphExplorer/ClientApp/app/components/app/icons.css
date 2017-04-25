@@ -1,0 +1,48 @@
+﻿@font-face
+{
+	font-family: 'Segoe MDL2 Assets';
+	src: url(../../../fonts/segmdl2.1.19.ttf);
+}
+
+.icon
+{
+	font-family: 'Segoe MDL2 Assets';
+	position: relative;
+	top: 1px;
+	display: inline-block;
+	line-height: 1;
+	font-style: normal;
+	font-weight: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-pencil:before
+{
+	content: "\e104";
+}
+
+.icon-collapse:before
+{
+	content: "\e73f";
+}
+
+.icon-expand:before
+{
+	content: "\e740";
+}
+
+.icon-restore:before
+{
+	content: "\e743";
+}
+
+.icon-formatted:before
+{
+	content: "\e943";
+}
+
+.icon-unformatted:before
+{
+	content: "\ea37";
+}

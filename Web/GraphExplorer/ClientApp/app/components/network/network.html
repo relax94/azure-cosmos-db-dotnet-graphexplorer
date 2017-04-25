@@ -1,0 +1,207 @@
+<template>
+    <require from="./network.css"></require>
+    <require from="../modal/modal.html"></require>
+    <require from="../floating/floating.html"></require>
+	<require from="../console/console"></require>
+
+    <form class="queryControl">
+        <fieldset class="inputWrapper floatLeft">
+            <div>
+                <input class="query" type="text" value.bind="query" placeholder="gremlin >">        
+            </div>
+            <div class="actionsWrapper">
+                <div class="floatLeft">
+                    <a href="#" click.delegate="modal = modalTypes.LoadQuery">Load Query</a>
+                    <a href="#" click.delegate="modal = modalTypes.SaveQuery">Save Query</a>
+                </div>
+                <div class="floatRight">
+                    <input type="checkbox" checked.bind="redrawOnQuery" id="refresh" />                    
+                    <label for="refresh">Refresh graph after query execute</label>
+                </div>            
+            </div>            
+        </fieldset>
+        <fieldset class="floatLeft">
+            <button click.delegate="executeQuery()" class="blackBtn">Execute</button>
+        </fieldset>
+        <fieldset class="selectWrapper floatRight">
+            <select value.bind="selectedCollection" change.delegate="collectionChange()" id="collectionCombo">
+                <option repeat.for="col of collections" value.bind="col">${col}</option>
+            </select>
+            <div class="newCollectionWrapper"><a href="#" click.delegate="modal = modalTypes.AddCollection">New Collection</a></div>
+        </fieldset>
+    </form>
+
+	<console view-model.ref="theConsole"></console>
+	
+    <div id="graphWorkspace">
+
+		<button id="showConsoleBtn" ref="showConsoleButton" class="linkBtn" click.delegate="theConsole.expand()" show.bind="!theConsole.IsVisible">Show Console</button>
+
+        <button class="showConfigBtn blackBtn" click.delegate="launchConfiguration()" if.bind="!showConfiguration && network && !loading && selector == selectorTypes.None">Configure Graph</button>
+
+        <div class="progressContainer" if.bind="loading">
+            <div class="progressBarContainer">
+                <div class="progressText">${progressText}</div>
+                <div class="progressBar" css="width: ${progressPercent * 400}px;">
+                    <span>${progressValue}%</span>
+                </div>
+            </div>
+        </div>
+
+        <floating class="configuration" if.bind="showConfiguration && selector == selectorTypes.None">
+            <button class="closeBtn glyphicon glyphicon-remove" click.delegate="showConfiguration = false"></button>
+
+            <h3>Configure graph</h3>            
+            <div class="actionControl">
+                <label>Default Node shape</label>
+                <select value.bind="selectedShape" change.delegate="shapeChange()">
+                    <option repeat.for="shape of shapes" value.bind="shape">${shape}</option>
+                </select>
+            </div>
+
+            <div class="actionControl">
+                <label>Node size (${nodeSize})<span if.bind="sizableShapes.indexOf(selectedShape) == -1">[Shape not resizable]</span></label>
+                <input disabled.bind="sizableShapes.indexOf(selectedShape) == -1" type="range" min="5" max="100" value.bind="nodeSize" change.delegate="sizeChange($event, 'nodes')" />
+            </div>
+                
+            <div class="actionControl">
+                <label>Edge size (${edgeSize})</label>
+                <input type="range" min="0" max="10" value.bind="edgeSize" step="0.25" change.delegate="sizeChange($event, 'edges')" />
+            </div>
+
+            <div class="actionControl">
+                <label>Icon size (${iconSize})</label>
+                <input type="range" min="5" max="100" value.bind="iconSize" step="5" change.delegate="sizeChange($event, 'icons')" />
+            </div>
+                
+            <label>Node type settings</label>
+            <div class="nodeTypeRow" repeat.for="nodeType of nodeTypeSettings">
+                <span class="glyphicon iconSquare selectBox" css="color: ${nodeType.color};" >${nodeType.icon}</span>
+                
+                <label>${nodeType.type}</label>
+                
+                <div class="btnGroup">
+                    <button class="linkBtn" click.delegate="changeIconSetting(nodeType.type, 'color')">Change Color</button>
+                    <button class="linkBtn" click.delegate="changeIconSetting(nodeType.type, 'icon')">Change Icon</button>
+                </div>
+            </div>            
+        </floating>
+
+        <floating class="autoHeight" if.bind="selector == selectorTypes.Icon">                        
+            <button class="closeBtn glyphicon glyphicon-remove" click.delegate="selector = selectorTypes.None"></button>
+            <h3>Change icon</h3>
+
+            <div class="actionControl">                
+                <button class="glyphicon selectBox iconSquare" repeat.for="icon of icons" click.delegate="iconSelected(icon)">${icon}</button>
+            </div>
+        </floating>
+
+        <floating class="autoHeight" if.bind="selector == selectorTypes.Color">
+            <button class="closeBtn glyphicon glyphicon-remove" click.delegate="selector = selectorTypes.None"></button>
+            <h3>Change color</h3>
+
+            <div class="actionControl">                
+                <button class="selectBox colorSquare" css="background: ${color};" repeat.for="color of colors" click.delegate="colorSelected(color)"></button>
+            </div>            
+        </floating>
+
+        <floating class="rightPane" if.bind="graphMetadata">
+            <h3 if.bind="graphMetadata.type == 'Vertex'">${graphMetadata._displayLabel || graphMetadata.label}</h3>
+            <h6 if.bind="graphMetadata.type == 'Vertex'">${graphMetadata.type}: ${graphMetadata.label}</h6>
+            <h3 if.bind="graphMetadata.type == 'Edge'">${graphMetadata.type}: ${graphMetadata.label}</h3>
+            <h6>Id: ${graphMetadata.id}</h6>
+
+            <div class="propertyGroup" if.bind="graphMetadata.type == 'Vertex'">
+                <button class="linkBtn" click.delegate="changeIconSetting(graphMetadata.label, 'color')">Change Color</button>
+                <button class="linkBtn" click.delegate="changeIconSetting(graphMetadata.label, 'icon')">Change Icon</button>
+
+                <div>
+                    <label>Set label property for Node Type</label>
+
+                    <select value.bind="selectedLabelProperty" change.delegate="labelChange()">
+                        <option value.bind="defaultLabelConstant">Default (label)</option>
+                        <option value.bind="noLabelConstant">No Label</option>
+                        <option repeat.for="property of graphMetadata.properties | keys" value.bind="property">${property}</option>
+                    </select>
+                </div>
+            </div>
+
+            <span class="glyphicon glyphicon-search" id="searchIcon"></span>
+            <input type="text" id="searchInput" placeholder="Search" keyup.delegate="doFilter($event)" value.bind="searchString" />
+            <table id="properties">
+                <tr if.bind="graphMetadata.properties"><th colspan="2">Properties</th></tr>
+                <tr repeat.for="property of graphMetadata.properties | keys">
+                    <td class="ellipsis" title="${property}">${property}</td>
+                    <td>${graphMetadata.properties[property]}</td>
+                </tr>
+                <tr><th colspan="2" if.bind="graphMetadata.inE">In Edge(s)</th></tr>
+                <tr repeat.for="inE of graphMetadata.inE | keys">
+                    <td colspan="2">${inE}</td>
+                </tr>
+                <tr><th colspan="2" if.bind="graphMetadata.outE">Out Edge(s)</th></tr>
+                <tr repeat.for="outE of graphMetadata.outE | keys">
+                    <td colspan="2">${outE}</td>
+                </tr>
+                <tr if.bind="graphMetadata.from"><th colspan="2">Source Node</th></tr>
+                <tr if.bind="graphMetadata.from">
+                    <td colspan="2">${graphMetadata.from}</td>
+                </tr>
+                <tr if.bind="graphMetadata.to"><th colspan="2">Target Node</th></tr>
+                <tr if.bind="graphMetadata.to">
+                    <td colspan="2">${graphMetadata.to}</td>
+                </tr>
+            </table>
+        </floating>
+
+        <!--TODO: will do this super soon-->
+        <modal id="loadQuery" if.bind="modal == modalTypes.LoadQuery">
+            <button class="closeBtn glyphicon glyphicon-remove" click.delegate="modal = modalTypes.None"></button>
+            <div>
+                <h2>Saved Queries</h2>
+                <div class="savedQueryList">
+                    <div repeat.for="saved of savedQueries" class="savedQueryRow">
+                        <h5><strong>Title: </strong>${saved.title}</h5>
+                        <h5><strong>Query: </strong>${saved.query}</h5>                        
+
+                        <div class="buttonGroup">
+                            <button class="primaryButton" click.delegate="loadSavedQuery(saved.query)">Load</button>
+                            <button class="cancelButton" click.delegate="deleteSavedQuery(saved.id)">Delete</button>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 if.bind="!savedQueries.length">No saved queries found.</h3>
+            </div>
+        </modal>
+
+        <modal id="saveQuery" if.bind="modal == modalTypes.SaveQuery">
+            <h2>Save Query</h2>
+            <button class="closeBtn glyphicon glyphicon-remove" click.delegate="modal = modalTypes.None"></button>
+            
+            <h5>${query}</h5>            
+            <label for="title">Title</label>
+            <input value.bind="queryTitle" id="title" />            
+            
+            <div class="buttonGroup">
+                <button class="primaryButton" click.delegate="saveCurrentQuery()">Save</button>
+                <button class="cancelButton" click.delegate="modal = modalTypes.None">Cancel</button>
+            </div>            
+        </modal>
+
+
+        <modal id="addCollection" if.bind="modal == modalTypes.AddCollection">
+            <h2>New Collection</h2>
+            <button class="closeBtn glyphicon glyphicon-remove" click.delegate="modal = modalTypes.None"></button>
+
+            <label for="title">Title</label>
+            <input value.bind="collectionTitle" id="title" />
+
+            <div class="buttonGroup">
+                <button class="primaryButton" click.delegate="addCollection()">Save</button>
+                <button class="cancelButton" click.delegate="modal = modalTypes.None">Cancel</button>
+            </div>                        
+        </modal>
+
+        <div id="network" ref="networkContainer"></div>
+    </div>
+</template>

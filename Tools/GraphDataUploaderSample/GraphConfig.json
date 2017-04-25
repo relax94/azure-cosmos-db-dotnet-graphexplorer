@@ -1,0 +1,90 @@
+﻿{
+  "nodes": [
+    {
+      "Name": "Organization",
+      "PathToData": "..\\..\\..\\..\\GraphData\\Nodes\\Organization\\",
+      "Attributes": [ "OrganizationId", "OrganizationName", "GlobalUltimateOrganizationId", "GlobalUltimateOrganizationName", "SapMsId", "DunsId", "MioId", "IsPrimary" ],
+      "NodeIdAttribute": "OrganizationId"
+    },
+    {
+      "Name": "Agreement",
+      "PathToData": "..\\..\\..\\..\\GraphData\\Nodes\\Agreement\\",
+      "Attributes": [ "AgreementIdentifier", "AgreementId", "AgreementNumber", "Type", "SubType", "Status", "Segment", "StartDate", "EndDate", "Duration", "SourceSystemUri", "SalesChannel" ],
+      "NodeIdAttribute": "AgreementIdentifier"
+    },
+    {
+      "Name": "AssetPosition",
+      "PathToData": "..\\..\\..\\..\\GraphData\\Nodes\\AssetPosition\\",
+      "Attributes": [ "AssetPositionIdentifier", "ProductId", "ProductName", "ProductCategory", "IsOnlineService", "UnitOfMeasure", "TotalQuantity", "ConsumedQuantity", "AcquisitionMethod", "AcquisitionDate", "TrustLevel", "StartDate", "ExpirationDate", "Status", "SourceSystemUri", "LicenseType", "LicenseLifeSpan", "AgreementSummaryId" ],
+      "NodeIdAttribute": "AssetPositionIdentifier"
+    },
+    {
+      "Name": "EnterpriseSubscription",
+      "PathToData": "..\\..\\..\\..\\GraphData\\Nodes\\EnterpriseSubscription\\",
+      "Attributes": [ "EnterpriseSubscriptionId", "ChurnScore", "TrialToPaidConversionScoreBT", "TrialToPaidConversionDayNBT", "TrialToPaidConversionVersionBT", "TrialToPaidConversionPositiveReasonCodeBT", "TrialToPaidConversionNegativeReasonCodeBT", "TrialToPaidConversionProcessDateBT", "TrialToPaidConversionScoreDNN", "TrialToPaidConversionDayNDNN", "TrialToPaidConversionVersionDNN", "TrialToPaidConversionPositiveReasonCodeDNN", "TrialToPaidConversionNegativeReasonCodeDNN", "TrialToPaidConversionProcessDateDNN", "OrderId", "OrderLineItemId", "AccountId", "SubscriptionReferenceId", "CtpBdkId", "PaymentInstrumentTypeId", "PaymentInstrumentTypeName", "CatalogOfferId", "ParentSubscriptionId", "PartnerId", "IsAutoRenew", "OrganizationUnitId", "SubscriptionStatusId", "SubscriptionStatus", "SubscriptionStartDate", "SubscriptionEndDate", "CurrentStateEndDate", "IncludedQuantity", "AllowedOverageQuantity", "NonRenewalReasonCode", "NonRenewalReasonName", "DeactivationReasonCode", "DeactivationReasonName", "SubscriptionCreateDate", "SourceVersionNumber", "FriendlySubscriptionName", "BillingCycleId", "BillingCycleName", "FromSubscriptionId", "HasTransitioned", "MigrationLocked", "AffiliateId", "AtlasIdentifier", "RIOIdentifier", "WebTrendsReferralSource", "WebTrendsCampaignIdentifier", "MintPurchaseSubscriptionTrackingId", "SkipSyncWorkFlowSteps", "TransitionTypeId", "TransitionTypeName", "LockoutCode", "LockoutCodeExpiryDate", "ChannelId", "ChannelName", "ChannelType", "ExternalSubscriptionId", "ExternalData", "SyncWorkFlowId", "SyncWorkFlowName", "SyncStateId", "SyncStateName", "TrialStartDate", "TrialEndDate", "TrialIncludedQuantity", "TrialAllowedOverageQuantity", "LastTrialExtendedDate", "TrialToPaidConversionDate", "PaidStartDate", "PaidEndDate", "PaidIncludedQuantity", "PaidAllowedOverageQuantity", "LastDisabledDate", "LastWarnedDate", "DeprovisionedDate", "CurrentPORAdditionDate", "UpdatedDateTime", "BisIsTestData", "BisIsDeleted", "Migrated", "RecipientAccountId", "Context", "BisLastUpdated" ],
+      "NodeIdAttribute": "EnterpriseSubscriptionId"
+    },
+    {
+      "Name": "EnterpriseOffer",
+      "PathToData": "..\\..\\..\\..\\GraphData\\Nodes\\EnterpriseOffer\\",
+      "Attributes": [ "EnterpriseOfferId", "AvailableStartDate", "AvailableEndDate", "BillingType", "DataRetentionPeriod", "GracePeriod", "IsTrial", "IsAddon", "OfferName", "OmsOfferId", "ProductFamily", "ProductName", "ProductSku", "ProvisioningId", "OfferDuration", "OfferDurationUom", "OfferLimit", "OfferLimitScope", "ProductId", "BisIsDeleted", "BisLastUpdated" ],
+      "NodeIdAttribute": "EnterpriseOfferId"
+    },
+    {
+      "Name": "Tenant",
+      "PathToData": "..\\..\\..\\..\\GraphData\\Nodes\\Tenant\\",
+      "Attributes": [ "TenantId", "MintBdkId", "AccountId", "OrganizationName", "BusinessAddressId", "FirstName", "LastName", "AddressLine1", "AddressLine2", "AddressLine3", "AddressLine4", "City", "Region", "PostalCode", "PhoneNumber", "CountryCode", "CommunicationLanguage", "CommunicationCulture", "ExistInBillingSystem", "IdentityProvider", "IdentityIdentifierId", "IdentityIdentifierType", "IdentitySubIdentifierId", "IdentitySubIdentifierType", "LastOrderId", "ChannelId", "ChannelName", "MigrationLocked", "SourceEntityId", "CAStateId", "CAStateName", "CAStateChangeReasonCodeId", "CAStateChangeReasonDescription", "SyncLocked", "ActiveBillingSystemId", "ActiveBillingSystemName", "ActiveBillingSystemDescription", "SaveCATrackingId", "MintCreateAccountTrackingId", "IsMigratedToMint", "VatId", "SyndicationPartnerId", "SyncWorkFlowId", "SyncWorkFlowName", "SyncStateId", "SyncStateName", "CACreatedDate", "SourceVersionNumber", "BisIsTestData", "BisIsDeleted", "BisLastUpdated", "SPOFirstUsageDate", "SPOLastUsageDate", "SPOLast7DaysActiveDays", "SPOMonthToDateActiveDays", "SPOLifeToDateActiveDays", "SPOLast7DaysActiveUsers", "SPOMonthToDateActiveUsers", "SPOLifeToDateActiveUsers", "EXOFirstUsageDate", "EXOLastUsageDate", "EXOLast7DaysActiveDays", "EXOMonthToDateActiveDays", "EXOLifeToDateActiveDays", "EXOLast7DaysActiveUsers", "EXOMonthToDateActiveUsers", "EXOLifeToDateActiveUsers", "LYOFirstUsageDate", "LYOLastUsageDate", "LYOLast7DaysActiveDays", "LYOMonthToDateActiveDays", "LYOLifeToDateActiveDays", "LYOLast7DaysActiveUsers", "LYOMonthToDateActiveUsers", "LYOLifeToDateActiveUsers", "ReputationScore" ],
+      "NodeIdAttribute": "TenantId"
+    },
+    {
+      "Name": "ServicePlan",
+      "PathToData": "..\\..\\..\\..\\GraphData\\Nodes\\ServicePlan\\",
+      "Attributes": [ "ServicePlanId", "ServiceType", "displayName" ],
+      "NodeIdAttribute": "ServicePlanId"
+    }
+  ],
+  "edges": [
+    {
+      "Name": "GlobalOrganizationAgreement",
+      "PathToData": "..\\..\\..\\..\\GraphData\\Edges\\GlobalOrganizationAgreement\\",
+      "SourceNode": "Organization",
+      "DestinationNode": "Agreement",
+      "Attributes": [ "OrganizationId", "ChildOrganizationId", "AgreementIdentifier", "RelationshipTypeCode", "RelationshipType", "StartDate", "EndDate", "Inferred", "OrganizationProfileType" ]
+    },
+    {
+      "Name": "GlobalOrganizationAssetPosition",
+      "PathToData": "..\\..\\..\\..\\GraphData\\Edges\\GlobalOrganizationAssetPosition\\",
+      "SourceNode": "Organization",
+      "DestinationNode": "AssetPosition",
+      "Attributes": [ "OrganizationId", "ChildOrganizationId", "AssetPositionIdentifier", "Inferred", "OrganizationProfileType" ]
+    },
+    {
+      "Name": "OrganizationTenant",
+      "PathToData": "..\\..\\..\\..\\GraphData\\Edges\\OrganizationTenant\\",
+      "SourceNode": "Organization",
+      "DestinationNode": "Tenant",
+      "Attributes": [ "OrganizationId", "TenantId" ]
+    },
+    {
+      "Name": "TenantSubscription",
+      "PathToData": "..\\..\\..\\..\\GraphData\\Edges\\TenantSubscription\\",
+      "SourceNode": "Tenant",
+      "DestinationNode": "EnterpriseSubscription",
+      "Attributes": [ "TenantId", "EnterpriseSubscriptionId" ]
+    },
+    {
+      "Name": "EnterpriseOfferServicePlan",
+      "PathToData": "..\\..\\..\\..\\GraphData\\Edges\\EnterpriseOfferServicePlan\\",
+      "SourceNode": "EnterpriseOffer",
+      "DestinationNode": "ServicePlan",
+      "Attributes": [ "EnterpriseOfferId", "ServicePlanId" ]
+    },
+    {
+      "Name": "EnterpriseOfferSubscription",
+      "PathToData": "..\\..\\..\\..\\GraphData\\Edges\\EnterpriseOfferSubscription\\",
+      "SourceNode": "EnterpriseSubscription",
+      "DestinationNode": "EnterpriseOffer",
+      "Attributes": [ "EnterpriseOfferId", "EnterpriseSubscriptionId" ]
+    }
+  ]
+}
