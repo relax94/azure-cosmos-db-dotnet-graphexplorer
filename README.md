@@ -46,7 +46,7 @@ The web application allows you to run Gremlin queries against the sample data as
 * **Global settings for the graph visualization**.  For example, edge thinkness, icon sizes, graph stabilization parameters.
 * **Creating a new collection**.  You can create a new collection or change between collections in the same DocumentDB.  This allows you to create a graph from scratch.  Node creation and updates right now uses the Gremlin syntax and is done via the command input box.
 
-    ![Graph Explorer](Images/graphexplorer.png)
+    ![Graph Explorer](images/graphexplorer.png)
 
 
 ## Open Source libraries used in the sample ##
