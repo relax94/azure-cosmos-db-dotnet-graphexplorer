@@ -3,43 +3,50 @@
     {
       "Name": "Organization",
       "PathToData": "..\\..\\..\\..\\GraphData\\Nodes\\Organization\\",
-      "Attributes": [ "OrganizationId", "OrganizationName", "GlobalUltimateOrganizationId", "GlobalUltimateOrganizationName", "SapMsId", "DunsId", "MioId", "IsPrimary" ],
+      "Attributes": [ "OrganizationId", "OrganizationName", "Attribute2", "GlobalUltimateOrganizationName" ],
+      "PrimaryAttributes": [ "OrganizationId" ],
       "NodeIdAttribute": "OrganizationId"
     },
     {
       "Name": "Agreement",
       "PathToData": "..\\..\\..\\..\\GraphData\\Nodes\\Agreement\\",
-      "Attributes": [ "AgreementIdentifier", "AgreementId", "AgreementNumber", "Type", "SubType", "Status", "Segment", "StartDate", "EndDate", "Duration", "SourceSystemUri", "SalesChannel" ],
+      "Attributes": [ "AgreementIdentifier", "Attribute1", "AgreementNumber", "Type", "SubType", "Status", "Attribute6", "StartDate", "EndDate", "Attribute9", "Source" ],
+      "PrimaryAttributes": [ "AgreementIdentifier" ],
       "NodeIdAttribute": "AgreementIdentifier"
     },
     {
       "Name": "AssetPosition",
       "PathToData": "..\\..\\..\\..\\GraphData\\Nodes\\AssetPosition\\",
-      "Attributes": [ "AssetPositionIdentifier", "ProductId", "ProductName", "ProductCategory", "IsOnlineService", "UnitOfMeasure", "TotalQuantity", "ConsumedQuantity", "AcquisitionMethod", "AcquisitionDate", "TrustLevel", "StartDate", "ExpirationDate", "Status", "SourceSystemUri", "LicenseType", "LicenseLifeSpan", "AgreementSummaryId" ],
+      "Attributes": [ "AssetPositionIdentifier", "Attribute1", "IsOnlineService", "Attribute3", "TotalQuantity", "Attribute5", "AcquisitionMethod", "AcquisitionDate", "Attribute8", "StartDate", "ExpirationDate", "Status", "Attribute12", "Attribute13", "Attribute14" ],
+      "PrimaryAttributes": [ "AssetPositionIdentifier" ],
       "NodeIdAttribute": "AssetPositionIdentifier"
     },
     {
       "Name": "EnterpriseSubscription",
       "PathToData": "..\\..\\..\\..\\GraphData\\Nodes\\EnterpriseSubscription\\",
-      "Attributes": [ "EnterpriseSubscriptionId", "ChurnScore", "TrialToPaidConversionScoreBT", "TrialToPaidConversionDayNBT", "TrialToPaidConversionVersionBT", "TrialToPaidConversionPositiveReasonCodeBT", "TrialToPaidConversionNegativeReasonCodeBT", "TrialToPaidConversionProcessDateBT", "TrialToPaidConversionScoreDNN", "TrialToPaidConversionDayNDNN", "TrialToPaidConversionVersionDNN", "TrialToPaidConversionPositiveReasonCodeDNN", "TrialToPaidConversionNegativeReasonCodeDNN", "TrialToPaidConversionProcessDateDNN", "OrderId", "OrderLineItemId", "AccountId", "SubscriptionReferenceId", "CtpBdkId", "PaymentInstrumentTypeId", "PaymentInstrumentTypeName", "CatalogOfferId", "ParentSubscriptionId", "PartnerId", "IsAutoRenew", "OrganizationUnitId", "SubscriptionStatusId", "SubscriptionStatus", "SubscriptionStartDate", "SubscriptionEndDate", "CurrentStateEndDate", "IncludedQuantity", "AllowedOverageQuantity", "NonRenewalReasonCode", "NonRenewalReasonName", "DeactivationReasonCode", "DeactivationReasonName", "SubscriptionCreateDate", "SourceVersionNumber", "FriendlySubscriptionName", "BillingCycleId", "BillingCycleName", "FromSubscriptionId", "HasTransitioned", "MigrationLocked", "AffiliateId", "AtlasIdentifier", "RIOIdentifier", "WebTrendsReferralSource", "WebTrendsCampaignIdentifier", "MintPurchaseSubscriptionTrackingId", "SkipSyncWorkFlowSteps", "TransitionTypeId", "TransitionTypeName", "LockoutCode", "LockoutCodeExpiryDate", "ChannelId", "ChannelName", "ChannelType", "ExternalSubscriptionId", "ExternalData", "SyncWorkFlowId", "SyncWorkFlowName", "SyncStateId", "SyncStateName", "TrialStartDate", "TrialEndDate", "TrialIncludedQuantity", "TrialAllowedOverageQuantity", "LastTrialExtendedDate", "TrialToPaidConversionDate", "PaidStartDate", "PaidEndDate", "PaidIncludedQuantity", "PaidAllowedOverageQuantity", "LastDisabledDate", "LastWarnedDate", "DeprovisionedDate", "CurrentPORAdditionDate", "UpdatedDateTime", "BisIsTestData", "BisIsDeleted", "Migrated", "RecipientAccountId", "Context", "BisLastUpdated" ],
+      "Attributes": [ "EnterpriseSubscriptionId", "Attribute1", "Attribute2", "Attribute3", "Attribute4", "Attribute5", "Attribute6", "Attribute7", "Attribute8", "Attribute9" ],
+      "PrimaryAttributes": [ "EnterpriseSubscriptionId" ],
       "NodeIdAttribute": "EnterpriseSubscriptionId"
     },
     {
       "Name": "EnterpriseOffer",
       "PathToData": "..\\..\\..\\..\\GraphData\\Nodes\\EnterpriseOffer\\",
-      "Attributes": [ "EnterpriseOfferId", "AvailableStartDate", "AvailableEndDate", "BillingType", "DataRetentionPeriod", "GracePeriod", "IsTrial", "IsAddon", "OfferName", "OmsOfferId", "ProductFamily", "ProductName", "ProductSku", "ProvisioningId", "OfferDuration", "OfferDurationUom", "OfferLimit", "OfferLimitScope", "ProductId", "BisIsDeleted", "BisLastUpdated" ],
+      "Attributes": [ "EnterpriseOfferId", "AvailableStartDate", "AvailableEndDate", "BillingType", "Attribute4", "Attribute5", "Attribute6", "Attribute7", "Attribute8", "ProductName", "Attribute10", "OfferDuration", "Attribute12", "Attribute13", "Attribute14", "Attribute15", "Attribute16" ],
+      "PrimaryAttributes": [ "EnterpriseOfferId" ],
       "NodeIdAttribute": "EnterpriseOfferId"
     },
     {
       "Name": "Tenant",
       "PathToData": "..\\..\\..\\..\\GraphData\\Nodes\\Tenant\\",
-      "Attributes": [ "TenantId", "MintBdkId", "AccountId", "OrganizationName", "BusinessAddressId", "FirstName", "LastName", "AddressLine1", "AddressLine2", "AddressLine3", "AddressLine4", "City", "Region", "PostalCode", "PhoneNumber", "CountryCode", "CommunicationLanguage", "CommunicationCulture", "ExistInBillingSystem", "IdentityProvider", "IdentityIdentifierId", "IdentityIdentifierType", "IdentitySubIdentifierId", "IdentitySubIdentifierType", "LastOrderId", "ChannelId", "ChannelName", "MigrationLocked", "SourceEntityId", "CAStateId", "CAStateName", "CAStateChangeReasonCodeId", "CAStateChangeReasonDescription", "SyncLocked", "ActiveBillingSystemId", "ActiveBillingSystemName", "ActiveBillingSystemDescription", "SaveCATrackingId", "MintCreateAccountTrackingId", "IsMigratedToMint", "VatId", "SyndicationPartnerId", "SyncWorkFlowId", "SyncWorkFlowName", "SyncStateId", "SyncStateName", "CACreatedDate", "SourceVersionNumber", "BisIsTestData", "BisIsDeleted", "BisLastUpdated", "SPOFirstUsageDate", "SPOLastUsageDate", "SPOLast7DaysActiveDays", "SPOMonthToDateActiveDays", "SPOLifeToDateActiveDays", "SPOLast7DaysActiveUsers", "SPOMonthToDateActiveUsers", "SPOLifeToDateActiveUsers", "EXOFirstUsageDate", "EXOLastUsageDate", "EXOLast7DaysActiveDays", "EXOMonthToDateActiveDays", "EXOLifeToDateActiveDays", "EXOLast7DaysActiveUsers", "EXOMonthToDateActiveUsers", "EXOLifeToDateActiveUsers", "LYOFirstUsageDate", "LYOLastUsageDate", "LYOLast7DaysActiveDays", "LYOMonthToDateActiveDays", "LYOLifeToDateActiveDays", "LYOLast7DaysActiveUsers", "LYOMonthToDateActiveUsers", "LYOLifeToDateActiveUsers", "ReputationScore" ],
+      "Attributes": [ "TenantId", "Attribute1", "OrganizationName", "Attribute3" ],
+      "PrimaryAttributes": [ "TenantId" ],
       "NodeIdAttribute": "TenantId"
     },
     {
       "Name": "ServicePlan",
       "PathToData": "..\\..\\..\\..\\GraphData\\Nodes\\ServicePlan\\",
-      "Attributes": [ "ServicePlanId", "ServiceType", "displayName" ],
+      "Attributes": [ "ServicePlanId", "ServiceType", "DisplayName" ],
+      "PrimaryAttributes": [ "ServicePlanId" ],
       "NodeIdAttribute": "ServicePlanId"
     }
   ],
@@ -49,42 +56,48 @@
       "PathToData": "..\\..\\..\\..\\GraphData\\Edges\\GlobalOrganizationAgreement\\",
       "SourceNode": "Organization",
       "DestinationNode": "Agreement",
-      "Attributes": [ "OrganizationId", "ChildOrganizationId", "AgreementIdentifier", "RelationshipTypeCode", "RelationshipType", "StartDate", "EndDate", "Inferred", "OrganizationProfileType" ]
+      "Attributes": [ "OrganizationId", "Attribute1", "AgreementIdentifier", "RelationshipTypeCode", "RelationshipType", "StartDate", "EndDate", "Attribute6", "OrganizationProfileType" ],
+      "PrimaryAttributes": [ "OrganizationId", "AgreementIdentifier", "Attribute1", "Attribute6" ]
     },
     {
       "Name": "GlobalOrganizationAssetPosition",
       "PathToData": "..\\..\\..\\..\\GraphData\\Edges\\GlobalOrganizationAssetPosition\\",
       "SourceNode": "Organization",
       "DestinationNode": "AssetPosition",
-      "Attributes": [ "OrganizationId", "ChildOrganizationId", "AssetPositionIdentifier", "Inferred", "OrganizationProfileType" ]
+      "Attributes": [ "OrganizationId", "Attribute1", "AssetPositionIdentifier", "Attribute2", "OrganizationProfileType" ],
+      "PrimaryAttributes": [ "OrganizationId", "AssetPositionIdentifier", "Attribute1", "Attribute2", "Attribute3" ]
     },
     {
       "Name": "OrganizationTenant",
       "PathToData": "..\\..\\..\\..\\GraphData\\Edges\\OrganizationTenant\\",
       "SourceNode": "Organization",
       "DestinationNode": "Tenant",
-      "Attributes": [ "OrganizationId", "TenantId" ]
+      "Attributes": [ "OrganizationId", "TenantId" ],
+      "PrimaryAttributes": [ "OrganizationId", "TenantId" ]
     },
     {
       "Name": "TenantSubscription",
       "PathToData": "..\\..\\..\\..\\GraphData\\Edges\\TenantSubscription\\",
       "SourceNode": "Tenant",
       "DestinationNode": "EnterpriseSubscription",
-      "Attributes": [ "TenantId", "EnterpriseSubscriptionId" ]
+      "Attributes": [ "TenantId", "EnterpriseSubscriptionId" ],
+      "PrimaryAttributes": [ "TenantId", "EnterpriseSubscriptionId" ]
     },
     {
       "Name": "EnterpriseOfferServicePlan",
       "PathToData": "..\\..\\..\\..\\GraphData\\Edges\\EnterpriseOfferServicePlan\\",
       "SourceNode": "EnterpriseOffer",
       "DestinationNode": "ServicePlan",
-      "Attributes": [ "EnterpriseOfferId", "ServicePlanId" ]
+      "Attributes": [ "EnterpriseOfferId", "ServicePlanId" ],
+      "PrimaryAttributes": [ "EnterpriseOfferId", "ServicePlanId" ]
     },
     {
       "Name": "EnterpriseOfferSubscription",
       "PathToData": "..\\..\\..\\..\\GraphData\\Edges\\EnterpriseOfferSubscription\\",
-      "SourceNode": "EnterpriseSubscription",
-      "DestinationNode": "EnterpriseOffer",
-      "Attributes": [ "EnterpriseOfferId", "EnterpriseSubscriptionId" ]
+      "SourceNode": "EnterpriseOffer",
+      "DestinationNode": "EnterpriseSubscription",
+      "Attributes": [ "EnterpriseOfferId", "EnterpriseSubscriptionId" ],
+      "PrimaryAttributes": [ "EnterpriseOfferId", "EnterpriseSubscriptionId" ]
     }
   ]
 }

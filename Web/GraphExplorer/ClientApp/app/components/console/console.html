@@ -1,5 +1,5 @@
 ﻿<template>
-	<div id="console" ref="consoleElement" class.bind="ConsoleState[State].toLowerCase()">
+	<div id="console" class="${ ConsoleState[State].toLowerCase() } ${ showGuide ? 'resizeForGuide' : '' }">
 		<require from="./console.css"></require>
 		<require from="../json-formatter/json-formatter"></require>
 
@@ -9,11 +9,12 @@
 		</div>
 
 		<div id="stateLinks">
+            <button class="linkBtn" click.delegate="clear()"><i class="icon icon-close"></i> Clear</button>
 			<button class="linkBtn" click.delegate="collapse()"><i class="icon icon-collapse"></i> Collapse</button>
 			<button class="linkBtn" click.delegate="expand()"><i class="icon ${State === ConsoleState.Full ? 'icon-restore' : 'icon-expand'}"></i> ${State === ConsoleState.Full ? 'Default' : 'Expand'}</button>
 		</div>
 
-		<div id="consoleOutput" class.bind="ConsoleMode[Mode]">
+		<div id="consoleOutput" ref="consoleOutput" class.bind="ConsoleMode[Mode]">
 			
 <pre class="intro">
           (_)                         / _| |  
@@ -22,9 +23,16 @@
 | | | | | | | (__| | | (_) \__ \ (_) | | | |_ 
 |_| |_| |_|_|\___|_|  \___/|___/\___/|_|  \__| Azure Gremlin Console</pre>
 
-			<json-formatter if.bind="Mode === ConsoleMode.Json" json-data.bind="ConsoleData"></json-formatter>
-                                  
-			<div if.bind="Mode === ConsoleMode.Standard" repeat.for="message of messageList" class.bind=message.type>${message.text}</div>
+            <div if.bind="Mode === ConsoleMode.Json">
+                <div repeat.for="raw of rawDataList">
+                    <span if.bind="raw.type == 'input'" class="input">${raw.data}</span>
+                    <json-formatter if.bind="raw.type == 'output'" json-data.bind="raw.data"></json-formatter>
+                </div>
+            </div>
+			     
+			<div if.bind="Mode === ConsoleMode.Standard">
+                <div repeat.for="message of messageList" class.bind="message.type">${message.text}</div>
+            </div>
 		</div>
 	</div>
 </template>

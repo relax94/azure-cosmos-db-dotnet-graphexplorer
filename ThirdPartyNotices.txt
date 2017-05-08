@@ -6,7 +6,7 @@ This product uses copyrighted material from the open source projects listed belo
 ***
 vis.js (http://visjs.org/#licenses)
 
-Copyright © 2015-2017 Almende B.V. / All rights reserved.
+Copyright ï¿½ 2015-2017 Almende B.V. / All rights reserved.
 Provided for Informational Purposes Only
 MIT License
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the Software), 
@@ -21,7 +21,7 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
 ***
 aurelia (http://aurelia.io/hub.html#/doc/article/aurelia/framework/latest/what-is-aurelia/2)
 
-Copyright © 2010 - 2017 Blue Spire Inc. / All rights reserved.
+Copyright ï¿½ 2010 - 2017 Blue Spire Inc. / All rights reserved.
 Provided for Informational Purposes Only
 MIT License
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the Software), 
@@ -33,9 +33,9 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTH
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ***
-pretty-Json (https://github.com/warfares/pretty-json/blob/master/LICENSE)
+json-formatter-js (https://github.com/mohsen1/json-formatter-js/blob/master/LICENSE)
 
-Copyright (c) 2012-2014 Rodolfo Barriga, warfares / All rights reserved.
+Copyright (c) 2015 Mohsen Azimi
 Provided for Informational Purposes Only
 MIT License
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the Software), 

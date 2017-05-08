@@ -21,71 +21,74 @@ export class Settings
 
     static defaultShapes: Array<string> = ['box', 'ellipse', 'database', 'text', 'diamond', 'dot', 'star', 'triangle', 'triangleDown', 'square']
 
-    static defaultColors: Array<string> = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet']
+    static defaultColors: Array<string> = ['black', 'DarkGrey ', 'DarkRed', 'Red', 'Orange', 'Yellow', 'Green', 'Turquoise', 'Blue', 'Indigo', 'Purple', 'LightGray', 'crimson', 'LightPink', 'Gold', 'Lime', 'LightGreen', 'cornflowerblue']
 
     static sizableShapes: Array<string> = ['square', 'triangleDown', 'triangle', 'star', 'dot', 'diamond']
 
-    static defaultIcons: Array<string> = [
-        '\u002a', //asterisk
-        '\u2709', //envelope
-        '\u270f', //pencil
-        '\ue005', //heart
-        '\ue008', //user
-        '\ue009', //film
-        '\ue021', //house
-        '\ue022', //file
-        '\ue035', //headphones
-        '\ue041', //tag,
-        '\ue046', //camera
-        '\ue043' //book
+    static defaultIcons: Array<{ font: string, code: string }> = [
+        { font: 'glyphicon', code: '\u2709' }, //envelope
+        { font: 'glyphicon', code: '\u270f' }, //pencil
+        { font: 'glyphicon', code: '\ue005' }, //heart
+        { font: 'glyphicon', code: '\ue008' }, //user
+        { font: 'glyphicon', code: '\ue009' }, //film
+        { font: 'glyphicon', code: '\ue021' }, //house
+        { font: 'glyphicon', code: '\ue022' }, //file
+        { font: 'glyphicon', code: '\ue035' }, //headphones
+        { font: 'glyphicon', code: '\ue041' }, //tag,
+        { font: 'glyphicon', code: '\ue046' }, //camera
+        { font: 'glyphicon', code: '\ue043' }, //book
+        { font: 'glyphicon', code: '\ue118' }, //folder
+        { font: 'glyphicon', code: '\ue116' }, //shopping cart
+        { font: 'glyphicon', code: '\ue145' }, //phone
+        { font: 'glyphicon', code: '\ue139' }, //briefcase
+        { font: 'glyphicon', code: '\ue135' }, //globe
+        { font: 'glyphicon', code: '\ue060' }, //picture
+        { font: 'glyphicon', code: '\ue023' }, //time
+        { font: 'glyphicon', code: '\ue103' }, //leaf
+        { font: 'glyphicon', code: '\ue200' }, //tree
+        { font: 'glyphicon', code: '\ue225' }, //piggy-bank
+        { font: 'glyphicon', code: '\ue233' }, //graduation cap,
+        { font: 'CommercialGraphIcons', code: '\uE90B' }, //organization
+        { font: 'CommercialGraphIcons', code: '\uE903' }, //agreement
+        { font: 'CommercialGraphIcons', code: '\uE8FB' }, //asset position
+        { font: 'CommercialGraphIcons', code: '\uE910' }, //subscription
+        { font: 'CommercialGraphIcons', code: '\uE900' }, //tenant
+        { font: 'CommercialGraphIcons', code: '\uE907' }, //enterpriseoffer
+        { font: 'CommercialGraphIcons', code: '\uE90F' }, //serviceplan
+        null //empty
     ]
+
+    static physicsSettings: { [name: string]: any } =
+    {
+        default:
+        {
+            //barnesHut with some default settings is VisJs setting
+        },
+        repulsion:
+        {
+            solver: 'repulsion'
+        },
+        forceAtlas2Based:
+        {
+            forceAtlas2Based:
+            {
+                springLength: 100
+            },
+            solver: 'forceAtlas2Based'
+        }
+    }
 
     static defaultIconGroups: { [name: string]: IconGroup } =
     {
-        Jason:
-        {
-            shape: 'icon',
-            icon:
-            {
-                face: 'Glyphicons Halflings',
-                code: '\u002A',
-                size: 25,
-                color: 'red'
-            }
-        },
-        Stephen:
-        {
-            shape: 'icon',
-            icon:
-            {
-                face: 'Glyphicons Halflings',
-                code: '\ue008',
-                size: 25,
-                color: 'limegreen'
-            }
-        },
-        'This Graph':
-        {
-            shape: 'icon',
-            icon:
-            {
-                face: 'Glyphicons Halflings',
-                code: '\ue022',
-                size: 25,
-                color: 'gray'
-            }
-        },
-
-        //TODO: test icons, please replace
         Organization:
         {
             shape: 'icon',
             icon:
             {
-                face: 'Glyphicons Halflings',
-                code: '\ue021',
+                face: 'CommercialGraphIcons',
+                code: '\uE90B',
                 size: 25,
-                color: 'black'
+                color: '#525252'
             }
         },
         Agreement:
@@ -93,10 +96,10 @@ export class Settings
             shape: 'icon',
             icon:
             {
-                face: 'Glyphicons Halflings',
-                code: '\u270f',
+                face: 'CommercialGraphIcons',
+                code: '\uE903',
                 size: 25,
-                color: 'gray'
+                color: '#006837'
             }
         },
         AssetPosition:
@@ -104,10 +107,10 @@ export class Settings
             shape: 'icon',
             icon:
             {
-                face: 'Glyphicons Halflings',
-                code: '\ue022',
+                face: 'CommercialGraphIcons',
+                code: '\uE8FB',
                 size: 25,
-                color: 'green'
+                color: '#006837'
             }
         },
         EnterpriseSubscription:
@@ -115,8 +118,8 @@ export class Settings
             shape: 'icon',
             icon:
             {
-                face: 'Glyphicons Halflings',
-                code: '\ue148',
+                face: 'CommercialGraphIcons',
+                code: '\uE910',
                 size: 25,
                 color: '#1964bc'
             }
@@ -126,10 +129,32 @@ export class Settings
             shape: 'icon',
             icon:
             {
-                face: 'Glyphicons Halflings',
-                code: '\ue008',
+                face: 'CommercialGraphIcons',
+                code: '\uE900',
                 size: 25,
-                color: '#330499'
+                color: '#1964bc'
+            }
+        },
+        EnterpriseOffer:
+        {
+            shape: 'icon',
+            icon:
+            {
+                face: 'CommercialGraphIcons',
+                code: '\uE907',
+                size: 25,
+                color: '#1964bc'
+            }
+        },
+        ServicePlan:
+        {
+            shape: 'icon',
+            icon:
+            {
+                face: 'CommercialGraphIcons',
+                code: '\uE90F',
+                size: 25,
+                color: '#1964bc'
             }
         }
     }
@@ -142,6 +167,10 @@ export class Settings
         },
         edges:
         {
+            font:
+            {
+                size: 10
+            },
             arrows:
             {
                 to:
@@ -156,6 +185,10 @@ export class Settings
                 enabled: true,
                 type: 'continuous',
                 roundness: 0.5
+            },
+            color:
+            {
+                color: '#adadad'
             }
         },
         interaction:
@@ -166,6 +199,7 @@ export class Settings
         layout:
         {
             improvedLayout: false
-        }
+        },
+        physics: Settings.physicsSettings['forceAtlas2Based']
     }
 }

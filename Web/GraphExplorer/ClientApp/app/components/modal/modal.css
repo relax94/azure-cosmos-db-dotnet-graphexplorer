@@ -26,20 +26,6 @@ modal .modalContent
     position: relative;
 }
 
-modal .modalContent .closeBtn
-{
-    position: absolute;
-    top: 35px;
-    right: 30px;
-    font-weight: 400;
-    font-size: 2em;
-    width: 30px;
-    min-width: 30px;
-    padding: 0;
-    margin: 0;
-    background: none;
-}
-
 modal .modalContent input
 {
     display: block; 
@@ -97,7 +83,31 @@ modal .modalContent h5
     margin: 40px 0;
 }
 
-modal .modalContent .savedQueryList h5
+modal .modalContent .savedQueryList h4
 {
     margin: 0;
+    font-weight: 500;
+}
+
+modal .modalContent .savedQueryList p
+{
+    margin-top: 10px;
+    word-break: break-all;
+}
+
+modal .modalContent .savedQueryList .active
+{
+    background: #F2F2F2;
+}
+
+modal .modalContent button.icon-close
+{
+    position: absolute;
+    background: none;
+    cursor: pointer;        
+    width: 20px;
+    padding: 0;
+    min-width: 20px;
+    right: 10px;
+    top: 10px;
 }

@@ -9,12 +9,12 @@ module.exports = {
     entry: { 'app': 'aurelia-bootstrapper-webpack' }, // Note: The aurelia-webpack-plugin will add your app's modules to this bundle automatically
     output: {
         path: path.resolve(bundleOutputDir),
-        publicPath: '/dist',
-        filename: '[name].js'
+        publicPath: 'wwwroot/dist/',
+		filename: '[name].js'
     },
     module: {
         loaders: [
-            { test: /\.ts$/, include: /ClientApp/, loader: 'ts-loader', query: { silent: true } },
+            { test: /\.ts$/, loader: 'ts-loader' },
             { test: /\.html$/, loader: 'html-loader' },
             { test: /\.css$/, loaders: [ 'style-loader', 'css-loader' ] },
             { test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: 'url-loader?limit=100000' },

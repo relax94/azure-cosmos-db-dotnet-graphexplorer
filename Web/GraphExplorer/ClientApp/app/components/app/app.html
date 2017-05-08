@@ -9,8 +9,7 @@
         </div>		
 	</header>
 
-	<main>
+	<main class="${showGuide ? 'resizeForGuide' : ''}">
 		<router-view style="display: flex; flex-direction: column; flex-grow: 1;"></router-view>
 	</main>
-
 </template>

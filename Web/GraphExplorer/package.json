@@ -20,7 +20,7 @@
     "bootstrap": "^3.3.7",
     "isomorphic-fetch": "^2.2.1",
     "jquery": "^2.2.1",
-    "json-formatter-js": "^2.0.0"
+    "json-formatter-js": "^2.2.0"
   },
   "devDependencies": {
     "@types/node": "^6.0.45",

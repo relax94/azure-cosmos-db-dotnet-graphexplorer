@@ -1,5 +1,4 @@
-﻿import { containerless, ViewEngineHooks } from 'aurelia-framework';
-import { viewEngineHooks } from 'aurelia-templating';
+﻿import { viewEngineHooks } from 'aurelia-templating';
 import { inject } from 'aurelia-framework';
 import { EventAggregator } from 'aurelia-event-aggregator';
 
@@ -19,22 +18,22 @@ enum ConsoleMode
 @inject(EventAggregator)
 export class Console
 {
-	private consoleElement: HTMLElement;
-	private messageList: any[] = [];
+    showGuide: boolean = false;
+	private consoleOutput: HTMLElement;
+    private messageList: any[] = [];
+    private rawDataList: any[] = [];
     private ea: EventAggregator;
 	
 	constructor(eventAggregator: EventAggregator)
 	{
-		this.ea = eventAggregator;
+        this.ea = eventAggregator;
+
+        this.ea.subscribe('setGuideState', response =>
+        {
+            this.showGuide = response;
+        });
     }
-
-
-    public data: any;
-    get ConsoleData(): any
-    {
-        return this.data;
-	}
-	
+    
 	private mode: ConsoleMode = ConsoleMode.Standard;
 	get Mode(): ConsoleMode
 	{
@@ -81,7 +80,6 @@ export class Console
 		// cheap analysis of data to see if we can determine what we've got, in order to display it all pretty and stuff
 		if (!input && data && data.length)
         {
-            this.data = data;
 			let messageType = 'output';
 			
 			switch (data[0].type)
@@ -109,25 +107,38 @@ export class Console
 				default:
 					this.messageList.push({ text: JSON.stringify(data), messageType });
 					break;
-			}
+            }
+
+            this.rawDataList.push({ data: data, type: 'output' });
 		}
 		else
-		{
-			this.messageList.push({ text: data, type: 'input' });
+        {
+            if (typeof data === 'object')
+            {
+                this.messageList.push({ text: JSON.stringify(data), type: 'output' });
+                this.rawDataList.push({ data: data, type: 'output' });
+            }
+            else
+            {
+                this.messageList.push({ text: data, type: 'input' });
+                this.rawDataList.push({ data: data, type: 'input' });
+            }
+            
 		}
 
+        this.ea.publish('consoleupdate', this.messageList[this.messageList.length - 1]);
 
-		this.ea.publish('consoleupdate', this.messageList[this.messageList.length - 1]);
 		setTimeout(() =>
 		{
-			this.consoleElement.scrollTop = this.consoleElement.scrollHeight;
+			this.consoleOutput.scrollTop = this.consoleOutput.scrollHeight;
 		},0);
 	}
 
 	clear()
 	{
 		this.messageList = [];
-		this.consoleElement.scrollTop = 0;
+        this.consoleOutput.scrollTop = 0;
+        this.rawDataList = [];
 	}
 }
 

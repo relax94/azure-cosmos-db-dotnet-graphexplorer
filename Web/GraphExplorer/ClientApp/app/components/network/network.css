@@ -17,6 +17,12 @@ select
     border: none;
 }
 
+.blackBtn:disabled
+{
+    background: gray;
+    color: #CCC;    
+}
+
 .floatLeft
 {
     float: left;
@@ -41,6 +47,13 @@ select
 {
     display: block;
     width: 100%;
+}
+
+input[type=checkbox]
+{
+    width: 16px;
+    height: 20px;
+    vertical-align: text-bottom;
 }
 
 .ellipsis
@@ -84,13 +97,6 @@ select
     width: 100%;
 }
 
-.queryControl #refresh
-{
-    width: 20px;
-    height: 20px;
-    vertical-align: text-bottom;
-}
-
 .queryControl .actionsWrapper,
 .queryControl .newCollectionWrapper
 {
@@ -107,13 +113,12 @@ select
     width: 100%;
 }
 
-#showConsoleBtn
+.queryControl .buttons
 {
     position: absolute;
     z-index: 100;
-    top: 0;
-    right: 0;
-    margin: 12px;
+    bottom: 10px;
+    right: 35px;
 }
 
 #graphWorkspace
@@ -151,6 +156,7 @@ select
     width: 100%;
     text-align: center;
     top: -1.5em;
+    color: #808080;
 }
 
 .progressBar
@@ -173,7 +179,7 @@ select
 
 #loadQuery .savedQueryRow
 {
-    padding-bottom: 15px;
+    padding: 15px 20px;
     position: relative;
 }
 
@@ -205,22 +211,10 @@ select
 
 .showConfigBtn
 {
+    background: #5C2D91;
     position: absolute;
-    top: 20px;
+    bottom: 10px;
     z-index: 1;
-}
-
-.closeBtn
-{
-    background: none;
-    font-size: 2em;
-    float: right;
-    border: none;
-}
-
-.configuration label
-{
-    display: block;
 }
 
 #graphMetadataTable td,
@@ -246,7 +240,7 @@ select
     border-left: solid 1px #8E8E8E;
     margin: 10px;
     padding-left: 10px;
-    width: 90%;
+    width: 70%;
 }
 
 .floatingPane .glyphicon-search
@@ -281,14 +275,62 @@ select
     margin-bottom: 20px;
 }
 
-.configuration .nodeTypeRow
+.configuration .typeSettingsRow
 {
     height: 50px;
     position: relative;    
 }
 
-.configuration .nodeTypeRow, 
-.actionControl
-    {
-        margin: 20px 0;
-    }
+.configuration .typeSettingsRow label
+{
+    max-width: 250px;
+}
+
+.configuration .typeSettingsRow,
+.actionControl {
+    margin: 10px 0;
+}
+
+#propertyPanelLinkBtn 
+{
+    right: 10px;
+    margin-top: 14px;
+    float: right;
+}
+
+#propertyPanelContent
+{
+    clear: both;
+}
+
+.actionControl .warning,
+.actionControl .information
+{
+    margin: 0 5px;
+}
+
+.actionControl .warning
+{
+    color: red;
+}
+
+.actionControl .information
+{
+    color: orange;
+}
+
+.propertyGroup button
+{
+    vertical-align: top;
+}
+
+.propertyGroup .selectBox
+{
+    border: 1px solid #DADADA;
+    color: #0078D7;
+}
+
+.propertyGroup .selectBox.iconSquare
+{
+    color: #333;
+}

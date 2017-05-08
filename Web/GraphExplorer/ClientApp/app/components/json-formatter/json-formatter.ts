@@ -26,6 +26,11 @@ export class JsonFormatter
 		{
 			this.jsonFormatter = new JSONFormatter(newValue, 1, { theme: 'dark' });
             this.element.replaceChild(this.jsonFormatter.render(), this.element.firstChild);
-		}
+        }
+        else
+        {
+            //clear contents
+            this.element.innerHTML = '';
+        }
 	}
 }

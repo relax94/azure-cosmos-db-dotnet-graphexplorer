@@ -13,6 +13,11 @@
 	color: #ccc;
 }
 
+#console.resizeForGuide
+{
+    width: calc(100% - 375px);
+}
+
 #console.collapsed
 {
 	height: 0;
@@ -25,37 +30,50 @@
 	height: calc(100vh - 200px);
 }
 
+
+/*
+Need this, along with the transition on #stateLinks and #modeLinks 
+because of an IE/Edge quirk where these items never snap back to their
+default height when their containing element (whose overflow is set to hidden)
+animates from height 0 to whatever.
+
+Transitioning min-height from 0 to 1 over a duration at least as long as it
+takes for these items to be revealed solves the problem
+*/
+#console.collapsed #stateLinks,
+#console.collapsed #modeLinks
+{
+	min-height: 0;
+}
+
 #modeLinks,
 #stateLinks
 {
 	position: absolute;
-	background: #fff;
+	background: #333;
 	padding: 2px 0;
 	top: 2px;
 	z-index: 200;
+	transition: min-height linear 1s;
+	min-height: 1px;
 }
+
 #stateLinks
 {
 	right: 20px;
 }
+
 #modeLinks
 {
 	left: 2px;
 }
-#modeLinks .icon,
-#stateLinks .icon
-{
-	color: #337ab7;
-}
+
 #modeLinks .linkBtn,
 #stateLinks .linkBtn
 {
 	margin: 0 3px;
 	padding: 4px;
-}
-#modeLinks .linkBtn.selected
-{
-	font-weight: bold;
+    color: white;
 }
 
 #consoleOutput
@@ -72,7 +90,9 @@
 	line-height: 1.5em;
 	font-size: 1.2em;
 	overflow-y: scroll;
+    word-wrap: break-word;
 }
+
 #consoleOutput .input:before,
 #consoleOutput .output:before
 {
@@ -92,6 +112,7 @@
 {
 	color: lightblue;
 }
+
 #consoleOutput .output:before
 {
 	content: "==>";

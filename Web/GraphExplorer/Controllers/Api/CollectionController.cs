@@ -1,24 +1,16 @@
-﻿using GraphExplorer.Configuration;
-using GraphExplorer.Models;
-using GraphExplorer.Utilities;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using Microsoft.Azure.Graph;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Http;
+﻿namespace GraphExplorer.Controllers.Api
+{
+    using GraphExplorer.Configuration;
+    using Microsoft.Azure.Documents;
+    using Microsoft.Azure.Documents.Client;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Web.Http;
 
-namespace GraphExplorer.Controllers.Api
-{   
     public class CollectionController : ApiController
-    {
-        private DocumentDBRepository<string> dbRepository = new DocumentDBRepository<string>();
-  
+    {  
         [HttpGet]
         public dynamic GetCollections()
         {
@@ -29,16 +21,42 @@ namespace GraphExplorer.Controllers.Api
         }
 
         [HttpPost]
-        public async Task CreateCollection([FromBody]string name)
+        public async Task CreateCollection([FromUri]string name)
         {
-            await dbRepository.CreateCollectionIfNotExistsAsync(name);
+            await CreateCollectionIfNotExistsAsync(name);
         }
 
         [HttpDelete]
         public async Task DeleteCollection(string name)
         {
-            await dbRepository.DeleteCollectionAsync(name);
+            await DeleteCollectionAsync(name);
         }
 
+        private async Task CreateCollectionIfNotExistsAsync(string collectionId)
+        {
+            try
+            {
+                await DocDbSettings.Client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(DocDbSettings.DatabaseId, collectionId));
+            }
+            catch (DocumentClientException e)
+            {
+                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    await DocDbSettings.Client.CreateDocumentCollectionAsync(
+                        UriFactory.CreateDatabaseUri(DocDbSettings.DatabaseId),
+                        new DocumentCollection { Id = collectionId },
+                        new RequestOptions { OfferThroughput = 400 });
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private async Task DeleteCollectionAsync(string collectionId)
+        {
+            await DocDbSettings.Client.DeleteDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(DocDbSettings.DatabaseId, collectionId));
+        }
     }
 }

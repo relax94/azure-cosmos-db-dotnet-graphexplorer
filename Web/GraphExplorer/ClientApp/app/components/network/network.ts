@@ -4,6 +4,8 @@ import { inject } from 'aurelia-framework';
 import { EventAggregator } from 'aurelia-event-aggregator';
 import { Settings } from './settings';
 import { Console } from '../console/console';
+import { Guide } from '../guide/guide';
+import { viewEngineHooks } from 'aurelia-templating';
 
 declare var vis: any;
 
@@ -27,6 +29,18 @@ interface Metadata
     _displayLabel?: string;
 }
 
+enum PropertyPanelMode
+{
+    Text,
+    Json
+}
+
+enum SettingsPanelMode
+{
+    Node,
+    Edge
+}
+
 @inject(HttpClient, EventAggregator)
 export class Network
 {
@@ -38,11 +52,15 @@ export class Network
     private graphMetadataOriginal: Metadata;
     private http: HttpClient;
     private searchString: string;
+    private jsonPropertyContent: any;
 
+    PanelMode: PropertyPanelMode;
+    SettingsMode: SettingsPanelMode;
     modalTypes = { None: 0, SaveQuery: 1, LoadQuery: 2, AddCollection: 3 };
     selectorTypes = { None: 0, Color: 1, Icon: 2 };
     modal = this.modalTypes.None;
     selector = this.selectorTypes.None;
+    showEdgeLabel = false;
 
     defaultLabelConstant = '__originalLabel__';
     noLabelConstant = '__noLabel__';
@@ -55,17 +73,25 @@ export class Network
     redrawOnQuery = true;
 
     iconGroups = Settings.defaultIconGroups;
+    physics = Settings.physicsSettings;
     icons = Settings.defaultIcons;
     colors = Settings.defaultColors;
     shapes = Settings.defaultShapes;
     sizableShapes = Settings.sizableShapes;
     selectedShape = this.shapes[0];
+    selectedPhysics = 'forceAtlas2Based';
     selectedNodeType: string;
+    selectedEdgeType: string;
+    selectedQueryId: string = null;
+    selectedNodeIcon : string = null;
+    selectedNodeIconFont: string = null;
+    selectedNodeColor: string = null;
     savedQueries: Array<SavedQuery>;
-    query = 'g.V()';
+    query = 'g.V(); g.E()';
     queryTitle: string;
     selectedQuery: SavedQuery;
-    nodeTypeSettings: any;
+    nodeTypeSettings: any; //all available Node Types in the displayed graph
+    edgeTypeSettings: any; //all available Edge Types in the displayed graph
 
     //bound to inputs, reason for string type
     nodeSize = "25";
@@ -77,6 +103,7 @@ export class Network
     collectionTitle: string;
 
     labelMappings: { [label: string]: string } = {};
+    edgeColors: { [label: string]: string } = {};
     selectedLabelProperty: string;
 
     nodes: any;
@@ -86,8 +113,6 @@ export class Network
     {
         this.http = http;
         this.getCollections();
-
-
 
         eventAggregator.subscribe('consoleupdate', response =>
         {
@@ -101,51 +126,60 @@ export class Network
 
     executeQuery()
     {
-        if (!this.query)
-        {
-            alert('Please enter a query.');
-            return;
-        }
-
-        this.theConsole.write(this.query);
-
         this.resetUi();
 
         this.progressText = "Querying DocumentDB";
         this.loading = true;
         this.http.fetch(`api/gremlin?query=${this.query}&collectionId=${this.selectedCollection}`)
+            .then((response: any) => { return this.handleErrors(response); })
             .then(result => result.json())
             .then((data: any) =>
             {
                 if (data && data.length)
                 {
+                    var dataForDisplay = [];
+                    for (let query of data)
+                    {
+                        this.theConsole.write(query.queryText);
+
+                        if (query.queryResult && query.queryResult.length)
+                        {
+                            this.theConsole.write(query.queryResult, false)
+                        }
+                        else
+                        {
+                            this.theConsole.write('No data returned from query', false);
+                        }
+
+                        dataForDisplay = dataForDisplay.concat(query.queryResult);
+                    }
+
                     if (this.redrawOnQuery)
                     {
-                        this.renderNetwork(data);
+                        this.renderNetwork(dataForDisplay);
                     }
                     else
                     {
-                        this.nicelyEndLoading();
+                        this.nicelyEndLoading(true);
                     }
-
-					this.theConsole.write(data, false);
                 }
                 else
                 {
-                    this.theConsole.write('No data returned from query', false);
-					this.nicelyEndLoading(true);
+                    this.nicelyEndLoading(true);
                 }
             })
             .catch((error) =>
             {
-                //todo: handle error/log error
+                this.theConsole.write(error, false);
+                this.nicelyEndLoading(true);
             });
     }
 
     launchConfiguration()
     {
-        this.refreshNodeTypeSettings();
-
+        this.refreshNodeTypeSettings(true);
+        this.refreshEdgeTypeSettings(true);
+        this.SettingsMode = SettingsPanelMode.Node;
         this.showConfiguration = true;
     }
 
@@ -169,6 +203,12 @@ export class Network
         this.saveCurrentSettings();
     }
 
+    physicsChange()
+    {
+        this.network.setOptions({ physics: this.physics[this.selectedPhysics] });
+        this.saveCurrentSettings();
+    }
+
     changeIconSetting(type, setting)
     {
         this.selectedNodeType = type;
@@ -183,10 +223,16 @@ export class Network
         }
     }
 
+    changeEdgeColor(type)
+    {
+        this.selectedEdgeType = type;
+        this.selector = this.selectorTypes.Color;
+    }
+
     iconSelected(icon)
     {
         this.addIconGroup(this.selectedNodeType, icon);
-        this.changeNodeIconGroup(this.selectedNodeType);
+        this.changeNodeIconGroup(this.selectedNodeType, icon);
 
         this.selectedNodeType = null;
         this.selector = this.selectorTypes.None;
@@ -196,12 +242,32 @@ export class Network
 
     colorSelected(color)
     {
+        if (this.SettingsMode == SettingsPanelMode.Edge)
+        {
+            this.edgeColorSelected(color);
+            this.edgeColors[this.selectedEdgeType] = color;
+            this.refreshEdgeTypeSettings();
+        }
+        else
+        {
+            this.iconGroups[this.selectedNodeType].icon.color = color;
+            this.network.setOptions({ groups: this.iconGroups });
+
+            this.refreshNodeTypeSettings();
+        }
+
         this.selector = this.selectorTypes.None;
+    }
 
-        this.iconGroups[this.selectedNodeType].icon.color = color;
-        this.network.setOptions({ groups: this.iconGroups });
+    edgeColorSelected(edgeColor)
+    {
+        let edges = this.edges.get({ filter: x => x.hiddenLabel == this.selectedEdgeType });
+        for (let edge of edges)
+        {
+            edge["color"] = { color: edgeColor };
+        }
 
-        this.refreshNodeTypeSettings();
+        this.edges.update(edges);
     }
 
     labelChange()
@@ -227,6 +293,9 @@ export class Network
 
     collectionChange()
     {
+        this.query = 'g.V(); g.E()';
+        this.resetUi();
+        this.theConsole.clear();
         this.getSavedQueries();
         this.getSavedSettings();
     }
@@ -270,62 +339,125 @@ export class Network
         return label;
     }
 
-    private refreshNodeTypeSettings()
+    private refreshNodeTypeSettings(dontSave?: boolean)
     {
         this.nodeTypeSettings = [];
 
-        var types = this.nodes.distinct('_gLabel');
+        let types = this.nodes.distinct('_gLabel');
 
         for (let type of types)
         {
-            var group = this.iconGroups[type];
+            let group = this.iconGroups[type];
 
             this.nodeTypeSettings.push({
                 type: type,
+                font: group ? group.icon.face : null,
                 icon: group ? group.icon.code : null,
                 color: group ? group.icon.color : null
+            });
+        }
+        if (this.graphMetadata)
+        {
+            this.setSelectedNodeSettings(this.graphMetadata.label);
+        }
+        
+        if (!dontSave)
+        {
+            this.saveCurrentSettings();
+        }
+    }
+
+
+    private refreshEdgeTypeSettings(dontSave?: boolean)
+    {
+        this.edgeTypeSettings = [];
+
+        let types = this.edges.distinct('hiddenLabel');
+
+        for (let type of types)
+        {
+            let col = this.edgeColors[type];
+            this.edgeTypeSettings.push({
+                type: type,
+                color: col
             })
         }
 
-        this.saveCurrentSettings();
+        if (!dontSave)
+        {
+            this.saveCurrentSettings();
+        }
     }
 
     //change visjs nodes group to existing group
-    private changeNodeIconGroup(type)
-    {
+    private changeNodeIconGroup(type, icon) {
         let nodes = this.nodes.get({ filter: x => x._gLabel == type });
 
         for (let node of nodes)
         {
-            node.group = type;
+            if (icon)
+            {
+                node.group = type;
+            }
+            else
+            {
+                delete node.group;
+            }
         }
 
         this.nodes.update(nodes);
     }
 
-    //add new group to visjs groups
-    private addIconGroup(groupName, code)
+    private changeEdgeLabelVisibility()
     {
-        //if group exists, just update icon, don't overwrite colors
-        if (this.iconGroups[groupName])
+        let allEdges = this.edges.get();
+        for (let edge of allEdges)
         {
-            this.iconGroups[groupName].icon.code = code;
+            edge.label = this.showEdgeLabel ? edge.hiddenLabel : undefined;
         }
-        else
+
+        this.edges.update(allEdges);
+    }
+
+    //add new group to visjs groups
+    private addIconGroup(groupName, icon)
+    {
+        if (icon)
         {
-            this.iconGroups[groupName] =
+            var font = icon.font == 'glyphicon' ? 'Glyphicons Halflings' : icon.font;
+
+            //if group exists, just update icon, don't overwrite colors
+            if (this.iconGroups[groupName])
+            {
+                this.iconGroups[groupName].icon.face = font;
+                this.iconGroups[groupName].icon.code = icon.code;
+            }
+            else
+            {
+                this.iconGroups[groupName] =
                 {
                     shape: 'icon',
                     icon:
                     {
-                        face: 'Glyphicons Halflings',
-                        code: code,
-                        size: 25,
+                        face: font,
+                        code: icon.code,
+                        size: parseInt(this.iconSize),
                         color: 'black'
                     }
                 }
-        }
+            }
 
+        }
+        else //remove icon
+        {
+            if (this.iconGroups[groupName])
+            {
+                //vis.js has a bug and remember the groups assigned to its nodes
+                //so if you don't do that it does not change the icon.
+                this.iconGroups[groupName].shape = this.selectedShape;
+                delete this.iconGroups[groupName];
+            }
+        }
         this.network.setOptions({ groups: this.iconGroups });
     }
 
@@ -336,10 +468,12 @@ export class Network
         this.nodes = new vis.DataSet();
         this.edges = new vis.DataSet();
 
-        for (let node of data)
+        for (let obj of data)
         {
-            if (node.type == 'vertex' && !this.nodes.get(node.id))
+            if (obj.type == 'vertex' && !this.nodes.get(obj.id))
             {
+                var node = obj;
+
                 //do not change _gLabel anywhere, this is the base gremlin node type
                 let visNode = { id: node.id, label: node.label, _gLabel: node.label, data: node };
 
@@ -354,23 +488,26 @@ export class Network
                 }
 
                 this.nodes.add(visNode);
+            }
+            else if (obj.type == 'edge' && !this.edges.get(obj.id))
+            {
+                var edge = obj;
 
-                if (node.outE)
+                var visEdge = { from: edge.outV, to: edge.inV, data: edge };
+
+                (visEdge as any).hiddenLabel = edge.label;
+
+                if (this.showEdgeLabel)
                 {
-                    for (let edgeType in node.outE)
-                    {
-                        let edgeTypeCollection = node.outE[edgeType];
-
-                        for (let edge of edgeTypeCollection)
-                        {
-                            var visEdge = { from: node.id, to: edge.inV, data: edge };
-
-                            (visEdge as any).hiddenLabel = edgeType;
-
-                            this.edges.add(visEdge);
-                        }
-                    }
+                    (visEdge as any).label = edge.label;
                 }
+
+                if (this.edgeColors[edge.label])
+                {
+                    (visEdge as any).color = { color: this.edgeColors[edge.label] };
+                }
+
+                this.edges.add(visEdge);
             }
         }
 
@@ -380,10 +517,18 @@ export class Network
             this.nicelyEndLoading(true);
         }
 
-        this.progressText = 'Stabilizing Network';
+        this.progressText = 'Stabilizing Graph Visualization';
 
         var options = Settings.defaultGraphOptions;
         options.groups = this.iconGroups;
+        options.nodes.shape = this.selectedShape;
+        options.physics = this.physics[this.selectedPhysics];
+        options.physics.stabilization =
+        {
+            iterations: 1250,
+            updateInterval: 1
+        };
+        options.physics.minVelocity = 5;
 
         this.network = new vis.Network(this.networkContainer, { nodes: this.nodes, edges: this.edges }, options);
 
@@ -430,30 +575,50 @@ export class Network
     private getCollections()
     {
         this.http.fetch('api/collection')
+            .then((response: any) => { return this.handleErrors(response); })
             .then(result => result.json())
             .then((data: any) =>
             {
                 this.collections = data;
                 if (this.collections && this.collections.length > 0)
                 {
-                    this.selectedCollection = this.collections[0];
+                    if (this.collectionTitle)
+                    {
+                        this.selectedCollection = this.collectionTitle;
+                        this.collectionTitle = '';
+                    }
+                    else
+                    {
+                        this.selectedCollection = this.collections[0];
+                    }
                     this.getSavedQueries();
                     this.getSavedSettings();
                 }
             })
     }
 
+    private handleErrors(response)
+    {
+        if (!response.ok)
+        {
+            response.json().then(
+                (json =>
+                {
+                    this.theConsole.write(json, false);
+                    this.theConsole.default();
+                }));
+
+            throw "Error!!!";
+        }
+        return response;
+    }
+
     private addCollection()
     {
-        var postBody = { name: this.collectionTitle };
-        this.http.fetch('api/collection', { method: 'post', body: json(postBody) })
-            .then((response: any) =>
-            {
-                this.collectionTitle = '';
-                this.modal = this.modalTypes.None;
-                this.getCollections();
-                this.selectedCollection = this.collectionTitle;
-            });
+        this.http.fetch(`api/collection?name=${this.collectionTitle}`, { method: 'post' })
+            .then((response: any) => { return this.handleErrors(response);  })
+            .then((response: any) => { this.getCollections(); })
+        this.modal = this.modalTypes.None;
     }
     /* end manipulating collection methods */
 
@@ -461,16 +626,23 @@ export class Network
     private getSavedQueries()
     {
         this.http.fetch(`api/query?collectionId=${this.selectedCollection}`)
+            .then((response: any) => { return this.handleErrors(response); })
             .then(result => result.json())
             .then((data: any) =>
             {
-                this.savedQueries = data;
+                this.savedQueries = [];
+
+                if(data && data.length)
+                {
+                    this.savedQueries = data;
+                    this.selectedQueryId = this.savedQueries[0].id;
+                }                
             });
     }
 
-    private loadSavedQuery(query: string)
-    {
-        this.query = query;
+    private loadSavedQuery()
+    {        
+        this.query = this.savedQueries.filter(x => x.id == this.selectedQueryId)[0].query;
         this.modal = this.modalTypes.None;
         this.executeQuery();
     }
@@ -478,6 +650,7 @@ export class Network
     private deleteSavedQuery(id: string)
     {
         this.http.fetch(`api/query?id=${id}&collectionId=${this.selectedCollection}`, { method: 'delete' })
+            .then((response: any) => { return this.handleErrors(response); })
             .then((response: any) => { this.getSavedQueries(); });
     }
 
@@ -486,12 +659,12 @@ export class Network
         var postBody = { title: this.queryTitle, query: this.query };
 
         this.http.fetch(`api/query?collectionId=${this.selectedCollection}`, { method: 'post', body: json(postBody) })
-            .then((response: any) =>
-            {
-                this.queryTitle = '';
-                this.modal = this.modalTypes.None;
+            .then((response: any) => { return this.handleErrors(response); })
+            .then((response: any) => {
                 this.getSavedQueries();
-            });
+            })
+        this.queryTitle = '';
+        this.modal = this.modalTypes.None;
     }
     /* end saved queries methods */
 
@@ -499,6 +672,7 @@ export class Network
     private getSavedSettings()
     {
         this.http.fetch(`api/settings?collectionId=${this.selectedCollection}`)
+            .then((response: any) => { return this.handleErrors(response); })
             .then(result => result.json())
             .then((data: any) =>
             {
@@ -509,13 +683,29 @@ export class Network
                     this.edgeSize = data.options.edgeSize;
                     this.iconSize = data.options.iconSize;
                     this.labelMappings = data.options.labelMappings;
+                    this.selectedShape = data.options.defaultNodeShape;
+                    this.showEdgeLabel = data.showEdgeLabel;
+                    this.selectedPhysics = data.options.physicsSolver;
+                    this.edgeColors = data.options.edgeColors;
+                }
+                else
+                {
+                    this.iconGroups = Settings.defaultIconGroups;
+                    this.nodeSize = "25";
+                    this.edgeSize = "1";
+                    this.iconSize = "25";
+                    this.labelMappings = {};
+                    this.selectedShape = this.shapes[0];
+                    this.showEdgeLabel = false;
+                    this.selectedPhysics = 'forceAtlas2Based';
+                    this.edgeColors = {};
                 }
             });
     }
 
     private saveCurrentSettings()
     {
-        var postBody =
+       var postBody =
             {
                 iconGroups: this.iconGroups,
                 options:
@@ -524,11 +714,15 @@ export class Network
                     edgeSize: parseInt(this.edgeSize),
                     iconSize: parseInt(this.iconSize),
                     defaultNodeShape: this.selectedShape,
-                    labelMappings: this.labelMappings
-                }
+                    labelMappings: this.labelMappings,
+                    physicsSolver: this.selectedPhysics,
+                    edgeColors: this.edgeColors
+                },
+                showEdgeLabel: this.showEdgeLabel
             };
 
-        this.http.fetch(`api/settings?collectionId=${this.selectedCollection}`, { method: 'post', body: json(postBody) });
+       this.http.fetch(`api/settings?collectionId=${this.selectedCollection}`, { method: 'post', body: json(postBody) })
+           .then((response: any) => { return this.handleErrors(response); })
     }
     /* end saved settings methods */
 
@@ -537,35 +731,40 @@ export class Network
     // clears out the DOM containing the network's configuration ui
     private resetUi()
     {
-        this.showConfiguration = false;
+        this.showConfiguration = false;        
         this.selector = this.selectorTypes.None;
         this.modal = this.modalTypes.None;
         this.graphMetadata = null;
         this.progressValue = 0;
         this.progressPercent = 0;
         this.nodeTypeSettings = [];
+        this.edgeTypeSettings = [];
 
         if (this.network && this.redrawOnQuery)
         {
             this.network.destroy();
+            this.network = null;
         }
     }
 
     private hoverEdge(showLabel, params)
     {
-        var edge = this.edges.get(params.edge);
-        edge.label = showLabel ? edge.hiddenLabel : undefined;
+        if (!this.showEdgeLabel)
+        {
+            var edge = this.edges.get(params.edge);
+            edge.label = showLabel ? edge.hiddenLabel : undefined;
 
-        this.edges.update(edge);
+            this.edges.update(edge);
+        }
     }
 
     private click(params)
-    {
+    {        
         if (this.loading)
-        {
+        {         
             return;
         }
-
+        this.PanelMode = PropertyPanelMode.Text;
         //create empty object
         this.graphMetadata = {};
 
@@ -573,7 +772,8 @@ export class Network
         {
             var node = this.nodes.get(params.nodes[0]);
             var nodeDetails = node.data;
-
+            this.jsonPropertyContent = nodeDetails;
+            
             if (nodeDetails)
             {
                 //this assign will take care of id, label, properties in a node
@@ -582,6 +782,8 @@ export class Network
                 this.graphMetadata._displayLabel = node.label;
                 this.selectedLabelProperty = this.labelMappings[node._gLabel] || null;
 
+                this.setSelectedNodeSettings(nodeDetails.label);
+                
                 //flatten the properties from nodes - instead of xxxx: Array(1), made it xxxx: yyyyy
                 if (nodeDetails.properties != null)
                 {
@@ -598,6 +800,8 @@ export class Network
         else if (params.edges && params.edges.length === 1)
         {
             var edgeDetails = this.edges.get(params.edges[0]);
+            this.jsonPropertyContent = edgeDetails.data;
+
             if (edgeDetails)
             {
                 //this assign will take care of id, label in an edge
@@ -630,7 +834,6 @@ export class Network
             this.graphMetadataOriginal = {};
             Object.assign(this.graphMetadataOriginal, this.graphMetadata);
         }
-
         this.searchString = '';
     }
 
@@ -690,6 +893,35 @@ export class Network
                 (prop && prop.toLowerCase().indexOf(filter.toLowerCase()) !== -1 ||
                     (value && value.toString().toLowerCase().indexOf(filter.toLowerCase()) !== -1))));
     }
+
+    private togglePropertyView()
+    {
+        if (this.PanelMode == PropertyPanelMode.Text)
+        {
+            this.PanelMode = PropertyPanelMode.Json
+        }
+        else
+        {
+            this.PanelMode = PropertyPanelMode.Text;
+        }
+    }
+
+    private setSelectedNodeSettings(node)
+    {
+        if (this.iconGroups[node])
+        {
+            let selectedIconSettings = this.iconGroups[node].icon;
+            this.selectedNodeIcon = selectedIconSettings.code;
+            this.selectedNodeColor = selectedIconSettings.color;
+            this.selectedNodeIconFont = selectedIconSettings.face;
+        }
+        else 
+        {
+            this.selectedNodeIcon = null;
+            this.selectedNodeColor = null;
+            this.selectedNodeIconFont = null;
+        }
+    }
 }
 
 //Class for iterating over object keys
@@ -703,5 +935,15 @@ export class KeysValueConverter
             var list = Object.keys(obj);
             return list;
         }
+    }
+}
+
+@viewEngineHooks()
+export class NetworkBinder
+{
+    beforeBind(view)
+    {
+        view.overrideContext.PropertyPanelMode = PropertyPanelMode;
+        view.overrideContext.SettingsPanelMode = SettingsPanelMode;
     }
 }

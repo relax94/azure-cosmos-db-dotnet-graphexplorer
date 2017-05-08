@@ -24,11 +24,5 @@
         /// </summary>
         [JsonProperty("query")]
         public string Query { get; set; }
-
-        /// <summary>
-        /// Gets or sets the partition
-        /// </summary>
-        [JsonProperty("_partition")]
-        public string Partition { get; set; }
     }
 }
