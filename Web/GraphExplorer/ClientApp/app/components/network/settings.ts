@@ -55,6 +55,10 @@ export class Settings
         { font: 'CommercialGraphIcons', code: '\uE900' }, //tenant
         { font: 'CommercialGraphIcons', code: '\uE907' }, //enterpriseoffer
         { font: 'CommercialGraphIcons', code: '\uE90F' }, //serviceplan
+        { font: 'CommercialGraphIcons', code: '\uE901' }, //paws
+        { font: 'CommercialGraphIcons', code: '\uE904' }, //soccer ball
+        { font: 'CommercialGraphIcons', code: '\uE905' }, //wight lifting
+
         null //empty
     ]
 
