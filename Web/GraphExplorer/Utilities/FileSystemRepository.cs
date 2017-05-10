@@ -35,6 +35,8 @@
 
         public async Task CreateOrUpdateItemAsync(T item, string collectionId)
         {
+            await Task.Yield();
+
             // add (or overwrite) item for this collection
             _allItems[collectionId] = item;
             SaveToRepository();
@@ -42,6 +44,8 @@
 
         public async Task DeleteItemAsync(string id, string collectionId)
         {
+            await Task.Yield();
+
             if (_allItems.ContainsKey(collectionId))
             {
                 _allItems.Remove(collectionId);
