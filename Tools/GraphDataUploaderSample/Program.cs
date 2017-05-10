@@ -51,8 +51,8 @@
                 collection = collections.FirstOrDefault(x => x.Id == collectionName);
 
                 connection = new GraphConnection(client, collection);
-
-                int.TryParse(ConfigurationManager.AppSettings["MaxTasks"], out int maxTasks);
+                int maxTasks;
+                int.TryParse(ConfigurationManager.AppSettings["MaxTasks"], out maxTasks);
 
                 // Processing GraphConfig
                 string configPath = ConfigurationManager.AppSettings["GraphConfigFile"];

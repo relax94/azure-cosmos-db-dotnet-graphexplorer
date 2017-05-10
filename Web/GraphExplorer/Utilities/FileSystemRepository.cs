@@ -22,7 +22,8 @@
 
         public async Task<T> GetItemAsync(string collectionId)
         {
-            if(!_allItems.TryGetValue(collectionId, out T item))
+            T item;
+            if(!_allItems.TryGetValue(collectionId, out item))
             {
                 //create a new T and put default items in it
                 await CreateOrUpdateItemAsync(_allItems[_defaultItem], collectionId);

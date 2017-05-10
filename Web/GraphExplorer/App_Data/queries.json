@@ -73,7 +73,7 @@
     {
       "id": "15",
       "title": "Get all Subscriptions with more than one Tenant",
-      "query": "g.V().union(__.where(in('TenantEnterpriseSubscription').count().is(gt(1))),__.where(in('TenantEnterpriseSubscription').count().is(gt(1))).repeat(__.in()).times(2).emit(), __.where(in('TenantEnterpriseSubscription').count().is(gt(1))).out()); g.E();"
+      "query": "g.V().has('label','EnterpriseSubscription').where(inE('TenantEnterpriseSubscription').count().is(gt(1))).as('a').union(__.select('a'),__.select('a').repeat(__.in()).times(2).emit(),__.select('a').out()); g.E();"
     }
   ]
 }
